@@ -1,0 +1,196 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html lang="sv-se" xmlns="http://www.w3.org/1999/xhtml">
+	<head>
+		<link href="DMI_favicon.ico" rel="icon" type="image/x-icon" />
+		<link href="DMI_favicon.ico" rel="shortcut icon" type="image/x-icon" />
+		<meta content="&#169; 2011 Hemberg" name="copyright" />
+		<meta content="900; url=" http-equiv="Refresh" />
+		<meta content="Niclas Hemberg" name="author" />
+		<meta content="no" http-equiv="imagetoolbar" />
+		<meta content="sv-se" name="language" />
+		<meta content="text/css" http-equiv="Content-Style-Type" />
+		<meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
+		<meta content="text/javascript" http-equiv="Content-Script-Type" />
+		<script type="text/javascript">
+			/* <![CDATA[ */
+				var d, year, month, date;
+				var helsingborg, hasslarp, lyn;
+				var helsingborg_button, hasslarp_button, lyn_button;
+				var img, link;
+				
+				var d = new Date();
+				year = d.getFullYear();
+				month = d.getMonth() + 1;
+				if (month < 10) month = "0" + month;
+				date = d.getDate();
+				if (date < 10) date = "0" + date;
+				date = year + month + date;
+				
+				helsingborg = document.createElement("div");
+				helsingborg.className = "weather";
+				img = helsingborg.appendChild(document.createElement("img"));
+				img.alt = "Helsingborg, 2 dygn";
+				img.height = "360";
+				img.src = "http://servlet.dmi.dk/byvejr/servlet/byvejr_dag1?by=152&mode=long";
+				img.width = "640";
+				img = helsingborg.appendChild(document.createElement("img"));
+				img.alt = "Helsingborg, dygn 3-9";
+				img.height = "255";
+				img.src = "http://servlet.dmi.dk/byvejr/servlet/world_image?city=2706767&mode=dag3_9";
+				img.width = "640";
+				
+				hasslarp = document.createElement("div");
+				hasslarp.className = "weather";
+				img = hasslarp.appendChild(document.createElement("img"));
+				img.alt = "Hasslarp, 2 dygn";
+				img.height = "255";
+				img.src = "http://servlet.dmi.dk/byvejr/servlet/world_image?city=2707426&mode=dag1_2";
+				img.width = "640";
+				img = hasslarp.appendChild(document.createElement("img"));
+				img.alt = "Hasslarp, dygn 3-9";
+				img.height = "255";
+				img.src = "http://servlet.dmi.dk/byvejr/servlet/world_image?city=2707426&mode=dag3_9";
+				img.width = "640";
+				
+				lyn = document.createElement("div");
+				lyn.className = "weather";
+				img = lyn.appendChild(document.createElement("img"));
+				img.alt = "Blixtregistreringar";
+				img.height = "360";
+				img.src = "https://www.dmi.dk/fileadmin/tkdata/KlGridDK/grid_maps/day/680/interpolated_1/" + year + "/" + month + "/" + date + ".png";
+				img.width = "640";
+				
+				helsingborg_button = document.createElement("button");
+				helsingborg_button.appendChild(document.createTextNode("Visa vädret i Helsingborg"));
+				doAddEventListener(helsingborg_button, "click", show, helsingborg);
+				
+				hasslarp_button = document.createElement("button");
+				hasslarp_button.appendChild(document.createTextNode("Visa vädret i Hasslarp"));
+				doAddEventListener(hasslarp_button, "click", show, hasslarp);
+				
+				lyn_button = document.createElement("button");
+				lyn_button.appendChild(document.createTextNode("Visa blixtregistreringar"));
+				doAddEventListener(lyn_button, "click", show, lyn);
+				
+				function show(child) {
+					var container = document.getElementById("container");
+					
+					if (container.firstChild.nextSibling) container.removeChild(container.firstChild.nextSibling);
+					
+					container.appendChild(child);
+					
+					helsingborg_button.disabled = (child == helsingborg) ? true : false;
+					hasslarp_button.disabled = (child == hasslarp) ? true : false;
+					lyn_button.disabled = (child == lyn) ? true : false;
+					
+					externalLinks();
+				}
+				
+				window.onload = function() {
+					var menu = document.getElementById("menu");
+					
+					menu.appendChild(helsingborg_button);
+					menu.appendChild(hasslarp_button);
+					var meteoalarmDiv = menu.appendChild(document.createElement("div"));
+					var vattenstandHBGDiv = menu.appendChild(document.createElement("div"));
+					var lynDiv = menu.appendChild(document.createElement("div"));
+					var lightningMapsDiv = menu.appendChild(document.createElement("div"));
+					menu.appendChild(lyn_button);
+					
+					var meteoalarm = meteoalarmDiv.appendChild(document.createElement("a"));
+					meteoalarm.appendChild(document.createTextNode("Visa vädervarningar"));
+					meteoalarm.href = "https://www.meteoalarm.eu/en_UK/0/0/SE-Sweden.html";
+					meteoalarm.rel = "external";
+					meteoalarm.title = "Länken öppnas i ett nytt fönster";
+					
+					vattenstandHBG = vattenstandHBGDiv.appendChild(document.createElement("a"));
+					vattenstandHBG.appendChild(document.createTextNode("Visa vattenståndet i Helsingborg"));
+					vattenstandHBG.href = "https://www.smhi.se/vadret/hav-och-kust/vattenstand-och-vagor#ws=wpt-a,proxy=wpt-a,lang=sv,station=helsingborg_sjov";
+					vattenstandHBG.rel = "external";
+					vattenstandHBG.title = "Länken öppnas i ett nytt fönster";
+					
+					var lyn = lynDiv.appendChild(document.createElement("a"));
+					lyn.appendChild(document.createTextNode("Visa blixtregistreringar"));
+					lyn.href = "http://www.dmi.dk/vejr/maalinger/lyn/";
+					lyn.rel = "external";
+					lyn.title = "Länken öppnas i ett nytt fönster";
+					
+					var lightningMaps = lightningMapsDiv.appendChild(document.createElement("a"));
+					lightningMaps.appendChild(document.createTextNode("Lightning Maps"));
+					lightningMaps.href = "https://www.lightningmaps.org/?lang=en#m=normal;r=0;t=3;s=14;o=1;b=0.00;n=0;y=55.9066;x=12.2626;z=9;d=2;dl=2;dc=0;dn=0;ra=0;";
+					lightningMaps.rel = "external";
+					lightningMaps.title = "Länken öppnas i ett nytt fönster";
+					
+					show(helsingborg);
+				}
+				
+				// Copied from http://help.dottoro.com/ljeuqqoq.php and modiefied a little by me
+				function doAddEventListener(element, type, _function_, attribute) {
+					if (element.addEventListener) { // all browsers except IE before version 9
+						element.addEventListener(type, function() { _function_(attribute); }, false);
+					}
+					else { // IE before version 9
+						element.attachEvent("on" + type, function() { _function_(attribute); });
+					}
+				}
+				
+				function externalLinks() {
+					if (!document.getElementsByTagName) {
+						return;
+					}
+					
+					var aTags = document.getElementsByTagName("a");
+					for (var i = 0; i < aTags.length; i++) {
+						if (aTags[i].rel && aTags[i].rel == "external" && aTags[i].href) {
+							aTags[i].target = "_blank";
+						}
+					}
+				}
+			/* ]]> */
+		</script>
+		<style type="text/css">
+			body {
+				margin: 0px;
+			}
+			img {
+				border: 0px;
+			}
+			noscript img:first-child {
+				margin-top: 5px;
+			}
+			div#container {
+				position: relative;
+				width: 960px;
+			}
+			div#container div#menu {
+				left: 720px;
+				position: absolute;
+				text-align: center;
+				top: 0px;
+			}
+			div#container div#menu button {
+				margin-top: 5px;
+				width: 240px;
+			}
+			div#container div#menu div {
+				margin-top: 5px;
+			}
+			div#container div.weather {
+				left: 0px;
+				padding-top: 5px;
+				position: absolute;
+				text-align: center;
+				top: 0px;
+				width: 720px;
+			}
+		</style>
+		<title>Väder</title>
+	</head>
+	<body>
+		<noscript>
+			<img alt="Helsingborg, 2 dygn" height="360" src="http://servlet.dmi.dk/byvejr/servlet/byvejr_dag1?by=152&mode=long" width="640" /><br />
+			<img alt="Helsingborg, dygn 3-9" height="255" src="http://servlet.dmi.dk/byvejr/servlet/world_image?city=2706767&mode=dag3_9" width="640" />
+		</noscript>
+		<div id="container"><div id="menu"></div></div>
+	</body>
+</html>
